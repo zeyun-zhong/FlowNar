@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FlowNar: Scalable Streaming Narration for Long-Form Videos</title>
+  <link rel="icon" type="image/png" href="images/flownar_icon.png">
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <style>
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      background-color: #ffffff;
+      color: #363636;
+    }
+
+    /* ── Navbar ── */
+    .navbar {
+      background-color: #fff;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .navbar-brand .navbar-item {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #363636;
+    }
+
+    /* ── Hero ── */
+    .hero-body {
+      padding: 4rem 1.5rem 2rem;
+    }
+    .hero-title {
+      font-family: 'Google Sans', sans-serif;
+      font-size: 2.6rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: #1a1a2e;
+    }
+    .hero-tagline {
+      font-size: 1.15rem;
+      color: #555;
+      max-width: 700px;
+      margin: 0.8rem auto 0;
+      font-style: italic;
+    }
+    .author-line {
+      font-size: 1.05rem;
+      margin-top: 0.5rem;
+    }
+    .author-line a {
+      color: #3273dc;
+    }
+    .author-line a:hover {
+      text-decoration: underline;
+    }
+    .equal-contrib {
+      font-size: 0.85rem;
+      color: #888;
+    }
+    .venue-badge {
+      display: inline-block;
+      background: #1a1a2e;
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 4px;
+      padding: 3px 10px;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.5rem;
+    }
+    .link-block {
+      margin-top: 1.2rem;
+    }
+    .link-block .button {
+      border-radius: 8px;
+      font-weight: 600;
+      margin: 0.3rem;
+      font-size: 0.95rem;
+    }
+
+    /* ── Section titles ── */
+    .section-title {
+      font-family: 'Google Sans', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 1.2rem;
+    }
+    .section-subtitle {
+      font-size: 0.9rem;
+      color: #666;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+    }
+
+    /* ── Teaser ── */
+    #teaser {
+      background: #f7f8fc;
+      padding: 2.5rem 0;
+    }
+    .teaser-video {
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      max-width: 900px;
+      width: 100%;
+    }
+    .teaser-caption {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 0.8rem;
+      max-width: 800px;
+    }
+
+    /* ── Contribution cards ── */
+    #contributions {
+      padding: 3.5rem 0;
+    }
+    .contrib-card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+      padding: 2rem 1.5rem;
+      height: 100%;
+      border-top: 4px solid #3273dc;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .contrib-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(50,115,220,0.15);
+    }
+    .contrib-card .icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+    }
+    .contrib-card .icon-wrap.blue   { background: #e8f0fe; color: #3273dc; }
+    .contrib-card .icon-wrap.green  { background: #e6f4ea; color: #34a853; }
+    .contrib-card .icon-wrap.orange { background: #fef3e2; color: #e67e22; }
+    .contrib-card .icon-wrap.purple { background: #f3e8fd; color: #9b59b6; }
+    .contrib-card h3 {
+      font-family: 'Google Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: #1a1a2e;
+    }
+    .contrib-card p {
+      font-size: 1rem;
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 0.7rem;
+    }
+    .contrib-card .tag {
+      margin-top: auto;
+      /*padding-top: 0.7rem;*/
+      align-self: center;
+    }
+
+    /* ── Method ── */
+    #method {
+      background: #f7f8fc;
+      padding: 3.5rem 0;
+    }
+    .method-img {
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+      width: 100%;
+    }
+    .method-caption {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 0.6rem;
+    }
+
+    /* ── Method Slider ── */
+    .method-slider {
+      position: relative;
+    }
+    .slide { display: none; }
+    .slide.active { display: block; }
+    .slider-btn {
+      position: absolute;
+      top: 45%;
+      transform: translateY(-50%);
+      background: rgba(26,26,46,0.65);
+      color: #fff;
+      border: none;
+      padding: 0.45rem 0.9rem;
+      font-size: 1.6rem;
+      line-height: 1;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+      z-index: 2;
+    }
+    .slider-btn:hover { background: rgba(26,26,46,0.9); }
+    .slider-btn.prev { left: 8px; }
+    .slider-btn.next { right: 8px; }
+    .slider-dots {
+      text-align: center;
+      margin-top: 0.7rem;
+    }
+    .dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #ccc;
+      margin: 0 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .dot.active { background: #3273dc; }
+    .method-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 0.9rem;
+    }
+    .method-step .step-num {
+      min-width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #3273dc;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .method-step p {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #444;
+    }
+
+    /* ── Efficiency ── */
+    #efficiency {
+      padding: 3.5rem 0;
+    }
+    .efficiency-stats {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .stat-pill {
+      --accent: #3273dc;
+      --bg: #e8f0fe;
+      background: var(--bg);
+      border-radius: 50px;
+      padding: 0.45rem 1.3rem;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .stat-pill .stat-num {
+      font-family: 'Google Sans', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: block;
+      line-height: 1;
+      color: var(--accent);
+    }
+    .stat-pill .stat-label {
+      font-size: 0.78rem;
+      color: #555;
+      margin-top: 2px;
+      display: block;
+    }
+    .efficiency-embed {
+      width: 100%;
+      height: 480px;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    }
+
+    /* ── Results ── */
+    #results {
+      background: #f7f8fc;
+      padding: 3.5rem 0;
+    }
+    .results-framing {
+      background: #1a1a2e;
+      color: #fff;
+      border-radius: 10px;
+      padding: 1.2rem 1.8rem;
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+    .results-framing strong {
+      color: #7ec8f5;
+    }
+    .comparison-embed {
+      width: 100%;
+      height: 500px;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    }
+    .full-results-toggle {
+      cursor: pointer;
+      color: #3273dc;
+      font-size: 0.9rem;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      margin-top: 1rem;
+    }
+    details summary {
+      cursor: pointer;
+      color: #3273dc;
+      font-size: 0.9rem;
+      margin-top: 1.2rem;
+      list-style: none;
+    }
+    details summary::before {
+      content: "▶  ";
+      font-size: 0.7rem;
+    }
+    details[open] summary::before {
+      content: "▼  ";
+    }
+
+    /* ── Qualitative Results ── */
+    #qualitative {
+      padding: 3.5rem 0;
+    }
+    .video-card {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .video-card video {
+      width: 100%;
+      display: block;
+    }
+    .video-card .video-caption {
+      padding: 0.8rem 1rem;
+      background: #fff;
+      font-size: 0.9rem;
+      color: #444;
+    }
+    .video-card .video-caption strong {
+      color: #1a1a2e;
+    }
+    .failure-box {
+      background: #fff8f0;
+      border-left: 4px solid #e67e22;
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.2rem;
+      font-size: 0.95rem;
+      color: #555;
+      margin-top: 1.5rem;
+    }
+    .failure-box strong {
+      color: #c0392b;
+    }
+
+    /* ── BibTeX ── */
+    #bibtex {
+      background: #f7f8fc;
+      padding: 3.5rem 0;
+    }
+    .bibtex-block {
+      position: relative;
+      background: #1a1a2e;
+      border-radius: 10px;
+      padding: 1.5rem 2rem;
+      font-family: 'Castoro', 'Courier New', monospace;
+      font-size: 0.88rem;
+      color: #e0e0e0;
+      white-space: pre;
+      overflow-x: auto;
+      line-height: 1.7;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: #3273dc;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .copy-btn:hover { background: #2563b0; }
+    .copy-btn.copied { background: #27ae60; }
+
+    /* ── Footer ── */
+    footer {
+      background: #1a1a2e;
+      color: #aaa;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+      line-height: 1.8;
+    }
+    footer a {
+      color: #7ec8f5;
+      text-decoration: none;
+    }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Misc ── */
+    .columns.is-centered { justify-content: center; }
+    .section { padding: 0; }
+    hr.thin { border: none; border-top: 1px solid #eee; margin: 0; }
+  </style>
+</head>
+
+<body>
+
+<!-- ════════════════════════════════ NAVBAR ════════════════════════════════ -->
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="container">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="#">
+        <strong>FlowNar</strong>
+      </a>
+    </div>
+    <div class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#teaser">Demo</a>
+        <a class="navbar-item" href="#contributions">Method</a>
+        <a class="navbar-item" href="#efficiency">Efficiency</a>
+        <a class="navbar-item" href="#results">Results</a>
+        <a class="navbar-item" href="#bibtex">BibTeX</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════ HERO ════════════════════════════════ -->
+<section class="hero is-white">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+
+      <h1 class="hero-title">
+        <img src="images/flownar_icon.png" style="height: 4rem; vertical-align: middle; margin-right: 0.4rem; margin-bottom: 0.4rem;">FlowNar: Scalable Streaming Narration<br>for Long-Form Videos
+      </h1>
+
+      <!-- Authors -->
+      <div class="author-line" style="margin-top: 1.2rem;">
+        <a href="mailto:zeyun.zhong@kit.edu">Zeyun Zhong</a><sup>†,1,2</sup>&nbsp;&nbsp;
+        <a href="#">Manuel Martin</a><sup>2</sup>&nbsp;&nbsp;
+        <a href="#">Chengzhi Wu</a><sup>1,2</sup>&nbsp;&nbsp;
+        <a href="#">David Schneider</a><sup>2</sup>&nbsp;&nbsp;
+        <a href="#">Frederik Diederichs</a><sup>2</sup>&nbsp;&nbsp;
+        <a href="#">Juergen Gall</a><sup>3,4</sup>&nbsp;&nbsp;
+        <a href="#">Juergen Beyerer</a><sup>1,2</sup>
+      </div>
+      <div style="font-size: 0.85rem; color: #777; margin-top: 0.4rem;">
+        <sup>1</sup>Karlsruhe Institute of Technology (KIT)&nbsp;&nbsp;
+        <sup>2</sup>Fraunhofer IOSB&nbsp;&nbsp;
+        <sup>3</sup>Lamarr Institute&nbsp;&nbsp;
+        <sup>4</sup>University of Bonn
+      </div>
+      <div class="equal-contrib" style="margin-top: 0.25rem;">
+        <sup>†</sup>Corresponding author
+      </div>
+
+      <!-- Buttons -->
+      <div class="link-block">
+        <a href="ARXIV_LINK" class="button is-dark is-medium" target="_blank">
+          <span class="icon"><i class="ai ai-arxiv"></i></span>
+          <span>Paper (arXiv)</span>
+        </a>
+        <a href="https://github.com/zeyun-zhong/flownar" class="button is-link is-medium" target="_blank">
+          <span class="icon"><i class="fab fa-github"></i></span>
+          <span>Code (GitHub)</span>
+        </a>
+        <a href="#teaser" class="button is-info is-medium">
+          <span class="icon"><i class="fas fa-play-circle"></i></span>
+          <span>Demo Videos</span>
+        </a>
+        <a href="https://huggingface.co/datasets/zeyun-zhong/FlowNar-Data/tree/main" class="button is-warning is-medium" target="_blank">
+          <span class="icon">🤗</span>
+          <span>Data</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="thin">
+
+<!-- ════════════════════════════════ TEASER ════════════════════════════════ -->
+<section id="teaser">
+  <div class="container has-text-centered" style="padding: 2.5rem 1.5rem;">
+
+    <h2 class="section-title">Demo</h2>
+    <p class="section-subtitle">
+      FlowNar generates dense, temporally grounded narrations for a continuous video stream.
+      VRAM usage stays relatively constant regardless of video length.
+    </p>
+
+    <video class="teaser-video" autoplay muted loop playsinline controls>
+      <source src="videos/demo.mp4" type="video/mp4">
+    </video>
+
+    <p class="teaser-caption" style="margin: 0.8rem auto 0;">
+      <strong>FlowNar in action.</strong> The model processes an unbounded video stream and generates
+      temporally aligned narrations segment by segment, while its KV-cache memory stays bounded.
+      Unlike prior work, it does not slow down or run out of memory as the video grows longer.
+    </p>
+
+  </div>
+</section>
+
+<hr class="thin">
+
+<!-- ════════════════════════════════ CONTRIBUTIONS / TL;DR ════════════════════════════════ -->
+<section id="contributions">
+  <div class="container" style="padding: 3.5rem 1.5rem;">
+
+    <div class="has-text-centered">
+      <h2 class="section-title">TL;DR — What FlowNar Contributes</h2>
+    </div>
+
+    <div class="columns is-multiline is-centered">
+
+      <!-- DCM -->
+      <div class="column is-half-tablet is-one-quarter-desktop">
+        <div class="contrib-card">
+          <div class="icon-wrap blue">
+            <i class="fas fa-cut"></i>
+          </div>
+          <h3>Dynamic Context Management (DCM)</h3>
+          <p>
+            After each narration segment, the visual KV cache is pruned entirely.
+            This keeps GPU memory <strong>bounded</strong> and prevents error propagation
+            from misaligned history narrations into future segments.
+          </p>
+          <span class="tag is-light is-info">O(1) VRAM</span>
+        </div>
+      </div>
+
+      <!-- CLAM -->
+      <div class="column is-half-tablet is-one-quarter-desktop">
+        <div class="contrib-card" style="border-top-color: #34a853;">
+          <div class="icon-wrap green">
+            <i class="fas fa-memory"></i>
+          </div>
+          <h3>Cross-Linear Attention Memory (CLAM)</h3>
+          <p>
+            Historical frames are compressed into a <strong>fixed-size</strong> set of learnable
+            memory tokens via recurrent cross-attention. Per-step compute and memory stay constant
+            regardless of how many frames have been processed.
+          </p>
+          <span class="tag is-light is-success">Constant per-step compute</span>
+        </div>
+      </div>
+
+      <!-- Self-conditioned protocol -->
+      <div class="column is-half-tablet is-one-quarter-desktop">
+        <div class="contrib-card" style="border-top-color: #e67e22;">
+          <div class="icon-wrap orange">
+            <i class="fas fa-flask"></i>
+          </div>
+          <h3>Self-Conditioned Evaluation Protocol</h3>
+          <p>
+            Baselines and FlowNar are evaluated using only their own generated history —
+            no oracle text. This <strong>honest setting</strong> exposes compounding errors
+            that teacher-forcing evaluation hides.
+          </p>
+          <span class="tag is-light is-warning">Deployment-realistic</span>
+        </div>
+      </div>
+
+      <!-- Results headline -->
+      <div class="column is-half-tablet is-one-quarter-desktop">
+        <div class="contrib-card" style="border-top-color: #9b59b6;">
+          <div class="icon-wrap purple">
+            <i class="fas fa-chart-bar"></i>
+          </div>
+          <h3>Demonstrated at Scale</h3>
+          <p>
+            Evaluated on <strong>Ego4D, EgoExo4D, and EK100</strong>.
+            On EK100, reduces KV cache usage by up to <strong>48.3&times;</strong> compared to VideoLLM-Online,
+            while achieving the best temporal alignment F1 scores across all datasets through robust dynamic context management (DCM).
+          </p>
+          <span class="tag is-light is-danger">3 benchmarks</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="thin">
+
+<!-- ════════════════════════════════ METHOD ════════════════════════════════ -->
+<section id="method">
+  <div class="container" style="padding: 3.5rem 1.5rem;">
+
+    <div class="has-text-centered">
+      <h2 class="section-title">Method</h2>
+      <p class="section-subtitle">
+        A streaming pipeline that couples a fixed-size recurrent memory with
+        aggressive context pruning to stay efficient at any video length.
+      </p>
+    </div>
+
+    <div class="columns is-vcentered is-centered" style="max-width: 1300px; margin: 0 auto;">
+
+      <!-- Architecture figure slider -->
+      <div class="column is-8">
+        <div class="method-slider">
+          <div class="slide active">
+            <img src="images/method.png" alt="FlowNar Architecture" class="method-img">
+            <p class="method-caption has-text-centered">
+              <em>Fig. 1 — Overall architecture of FlowNar. Visual tokens from a streaming encoder
+              are routed through CLAM for memory compression and DCM for context management before
+              being passed to the LLM narration head.</em>
+            </p>
+          </div>
+          <div class="slide">
+            <img src="images/memory.png" alt="CLAM Memory Update" class="method-img">
+            <p class="method-caption has-text-centered">
+              <em>Fig. 2 — CLAM recurrent memory update. New visual tokens sequentially
+                update a fixed-size recurrent state, and learnable query tokens read out
+                from the final state to produce fixed-size memory tokens,
+                keeping representation size constant across time steps.</em>
+            </p>
+          </div>
+          <div class="slide">
+            <img src="images/generation.png" alt="Generation Quality Examples" class="method-img">
+            <p class="method-caption has-text-centered">
+              <em>Fig. 3 — Illustration of the self-conditioned streaming narration process.</em>
+            </p>
+          </div>
+          <button class="slider-btn prev" onclick="changeSlide(-1)">&#8249;</button>
+          <button class="slider-btn next" onclick="changeSlide(1)">&#8250;</button>
+          <div class="slider-dots">
+            <span class="dot active" onclick="goToSlide(0)"></span>
+            <span class="dot" onclick="goToSlide(1)"></span>
+            <span class="dot" onclick="goToSlide(2)"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step-by-step description -->
+      <div class="column is-4">
+
+        <div class="method-step">
+          <div class="step-num">1</div>
+          <p><strong>Frame encoding.</strong> Each incoming video segment is encoded into
+          visual tokens by a frozen vision encoder.</p>
+        </div>
+
+        <div class="method-step">
+          <div class="step-num">2</div>
+          <p><strong>CLAM memory update.</strong> A gated recurrent mechanism
+            sequentially processes the new visual tokens to update a fixed-size memory
+            state. Learnable queries then read from this final state to produce
+            the fixed-size memory tokens — <em>O(1) per step</em>.</p>
+        </div>
+
+        <div class="method-step">
+          <div class="step-num">3</div>
+          <p><strong>LLM narration.</strong> The LLM receives current visual tokens + the
+          compact CLAM memory as context and generates the segment narration autoregressively.</p>
+        </div>
+
+        <div class="method-step">
+          <div class="step-num">4</div>
+          <p><strong>DCM pruning.</strong> After generation, all visual KV-cache entries are
+          discarded. Only the CLAM memory carries visual information forward — breaking the linear
+          growth of context that limits prior methods.</p>
+        </div>
+
+        <div style="margin-top: 1.5rem; background: #e8f0fe; border-radius: 8px; padding: 1rem;">
+          <p style="font-size: 0.88rem; color: #333;">
+            <strong>Key invariant:</strong> the KV-cache size at step <em>t</em> depends only on
+            the <em>current segment length</em>, not on <em>t</em> itself. This is what makes
+            FlowNar theoretically unbounded in video length.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="thin">
+
+<!-- ════════════════════════════════ EFFICIENCY ════════════════════════════════ -->
+<section id="efficiency">
+  <div class="container" style="padding: 3.5rem 1.5rem;">
+
+    <div class="has-text-centered">
+      <h2 class="section-title">Efficiency &amp; Scalability</h2>
+      <p class="section-subtitle">
+        FlowNar's KV-cache footprint stays flat or grows slowly as videos grow longer.
+        Competing methods pay linearly — and eventually run out of memory.
+      </p>
+    </div>
+
+    <!-- Headline stats -->
+    <div class="efficiency-stats">
+      <div class="stat-pill">
+        <span class="stat-num">48.3×</span>
+        <span class="stat-label">less KV-cache vs VideoLLM-Online<br>(EK100)</span>
+      </div>
+      <div class="stat-pill" style="--accent: #34a853; --bg: #e6f4ea;">
+        <span class="stat-num">3×</span>
+        <span class="stat-label">higher inference FPS</span>
+      </div>
+      <div class="stat-pill" style="--accent: #e67e22; --bg: #fef3e2;">
+        <span class="stat-num">10×</span>
+        <span class="stat-label">longer videos supported</span>
+      </div>
+      <div class="stat-pill" style="--accent: #9b59b6; --bg: #f3e8fd;">
+        <span class="stat-num">O(1)</span>
+        <span class="stat-label">memory w.r.t. video length</span>
+      </div>
+    </div>
+
+    <!-- Efficiency figure -->
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <img src="images/efficiency.png" alt="Efficiency comparison" class="method-img">
+        <p class="has-text-centered method-caption" style="margin-top: 0.5rem;">
+          <em>Fig. 4 — (Left) VRAM usage as video length increases.
+          Ours-C stays flat and Ours grows slowly, while baselines grow unboundedly.
+            (Right) Throughput on an H100 measured over 10K frames.
+            FlowNar achieves roughly 3× higher FPS than Videollm-online.</em>
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="thin">
+
+<!-- ════════════════════════════════ RESULTS ════════════════════════════════ -->
+<section id="results">
+  <div class="container" style="padding: 3.5rem 1.5rem;">
+
+    <div class="has-text-centered">
+      <h2 class="section-title">Results</h2>
+    </div>
+
+    <!-- Framing callout -->
+    <div class="columns is-centered">
+      <div class="column is-9">
+        <div class="results-framing">
+          <strong>Reading note:</strong> all numbers below are under the
+          <em>self-conditioned protocol</em> — the model conditions only on its
+          own previously generated narrations, not on oracle ground-truth text.
+          Under this realistic setting, baselines accumulate compounding errors.
+          <strong>In contrast, FlowNar mitigates these errors through its DCM and
+            remains robust under self-conditioning.</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison figure -->
+    <div class="columns is-centered">
+      <div class="column is-10">
+        <img src="images/flownar_comparison.png" alt="FlowNar results comparison" class="method-img">
+        <p class="has-text-centered method-caption" style="margin-top: 0.5rem;">
+          <em>Fig. 5 — F1 and CIDEr comparison across Ego4D, EgoExo4D and EpicKitchens-100
+          under the self-conditioned protocol. FlowNar and FlowNar-C consistently show
+          higher performance than baselines.</em>
+        </p>
+      </div>
+    </div>
+
+    <!-- Full results collapsible -->
+    <div class="columns is-centered" style="margin-top: 1.5rem;">
+      <div class="column is-9">
+        <details>
+          <summary>Full results (quantitative tables)</summary>
+          <div style="background: #fff; border-radius: 8px; padding: 1.2rem; margin-top: 0.8rem;">
+            <p style="font-size: 0.9rem; color: #555; margin-bottom: 1rem; line-height: 1.7;">
+              <strong>Self-conditioned protocol</strong> — the model conditions only on its own
+              previously generated narrations (deployment-realistic). With our dynamic context management (DCM), FlowNar variants consistently demonstrate significant improvements over the baselines.
+            </p>
+            <img src="images/self-conditioned_quantitative.png"
+                 alt="Self-conditioned quantitative results" class="method-img"
+                 style="margin-bottom: 1.5rem;">
+            <p style="font-size: 0.9rem; color: #555; margin: 1rem 0; line-height: 1.7;">
+              <strong>Teacher-forcing (oracle) protocol</strong> — the model is given ground-truth
+              history narrations. FlowNar performs on par with baseline models.
+            </p>
+            <img src="images/teacher-forcing_quantitative.png"
+                 alt="Teacher-forcing quantitative results" class="method-img">
+          </div>
+        </details>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="thin">
+
+<!-- ════════════════════════════════ QUALITATIVE ════════════════════════════════ -->
+<section id="qualitative">
+  <div class="container" style="padding: 3.5rem 1.5rem;">
+
+    <div class="has-text-centered">
+      <h2 class="section-title">Failure Cases</h2>
+    </div>
+
+    <div class="columns is-centered is-vcentered">
+
+      <!-- Failure demo -->
+      <div class="column is-8">
+        <div class="video-card">
+          <video autoplay muted loop playsinline controls>
+            <source src="videos/demo_failure.mp4" type="video/mp4">
+          </video>
+          <div class="video-caption">
+            <strong>Failure case.</strong> The model occasionally hallucinates fine-grained
+            object details or misses brief, fast actions at segment boundaries.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Honest failure analysis -->
+    <div class="columns is-centered" style="margin-top: 1rem;">
+      <div class="column is-10">
+        <div class="failure-box">
+          <strong>Why failures happen — and what to do about them.</strong><br>
+          The spatial 3×3 token compression in the vision encoder causes <em>oversmoothing</em>:
+          fine-grained details (small objects, subtle hand motions) are averaged away before
+          reaching the LLM. Hallucinations tend to occur when the visual signal is ambiguous
+          and the model falls back on statistical priors. Future work: higher-resolution
+          token sampling or adaptive spatial pooling that preserves detail for fast or
+          fine-grained segments.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="thin">
+
+<!-- ════════════════════════════════ BIBTEX ════════════════════════════════ -->
+<section id="bibtex">
+  <div class="container" style="padding: 3.5rem 1.5rem;">
+
+    <div class="has-text-centered">
+      <h2 class="section-title">BibTeX</h2>
+      <p class="section-subtitle">
+        If FlowNar is useful in your research, please consider citing:
+      </p>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div style="position: relative;">
+          <div class="bibtex-block" id="bibtex-text">@inproceedings{zhong2026flownar,
+  title     = {{FlowNar}: Scalable Streaming Narration for Long-Form Videos},
+  author    = {Zhong, Zeyun and Martin, Manuel and Wu, Chengzhi and Schneider, David and
+               Diederichs, Frederik and Gall, Juergen and Beyerer, Juergen},
+  booktitle = {International Conference on Machine Learning},
+  year      = {2026},
+  publisher = {PMLR},
+  note      = {Accepted, to appear}
+}</div>
+          <button class="copy-btn" id="copy-btn" onclick="copyBibtex()">Copy</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════ FOOTER ════════════════════════════════ -->
+<footer>
+  <div class="container">
+
+    <p>
+      <strong style="color: #fff;">Acknowledgements</strong>
+    </p>
+    <p style="max-width: 800px; margin: 0.5rem auto 1rem;">
+      This work was supported by the <a href="https://www.jubot.kit.edu/" target="_blank">JuBot</a> project funded by the Carl-Zeiss-Foundation.
+      The authors acknowledge support by the state of Baden-Württemberg through bwHPC.
+      Experiments were performed on the HoreKa supercomputer funded by the Ministry of
+      Science, Research and the Arts Baden-Württemberg and by the Federal Ministry of
+      Education and Research. Juergen Gall has been supported by the ERC Consolidator
+      Grant FORHUE (101044724).
+    </p>
+
+    <hr style="border-color: #333; margin: 1.2rem auto; max-width: 400px;">
+
+    <p>
+      Website template adapted from
+      <a href="https://nerfies.github.io" target="_blank">Nerfies</a>
+      (licensed under
+      <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>).
+    </p>
+    <p style="margin-top: 0.4rem; color: #666;">
+      © 2026 Zeyun Zhong et al. &nbsp;·&nbsp; MIT License
+    </p>
+
+  </div>
+</footer>
+
+<script>
+  function copyBibtex() {
+    const text = document.getElementById('bibtex-text').innerText;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(onCopied).catch(() => fallbackCopy(text));
+    } else {
+      fallbackCopy(text);
+    }
+  }
+
+  function fallbackCopy(text) {
+    const el = document.createElement('textarea');
+    el.value = text;
+    el.style.cssText = 'position:fixed;opacity:0;pointer-events:none;';
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    onCopied();
+  }
+
+  function onCopied() {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  }
+
+  // Method image slider
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const dots   = document.querySelectorAll('.dot');
+
+  function showSlide(n) {
+    slides[currentSlide].classList.remove('active');
+    dots[currentSlide].classList.remove('active');
+    currentSlide = (n + slides.length) % slides.length;
+    slides[currentSlide].classList.add('active');
+    dots[currentSlide].classList.add('active');
+  }
+  function changeSlide(dir) { showSlide(currentSlide + dir); }
+  function goToSlide(n)     { showSlide(n); }
+
+  // Smooth scroll for navbar links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // Burger menu toggle
+  const burger = document.querySelector('.navbar-burger');
+  const menu   = document.querySelector('.navbar-menu');
+  if (burger) {
+    burger.addEventListener('click', () => {
+      burger.classList.toggle('is-active');
+      menu.classList.toggle('is-active');
+    });
+  }
+</script>
+
+</body>
+</html>

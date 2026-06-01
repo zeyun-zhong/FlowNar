@@ -1,0 +1,55 @@
+# Claude
+.claude/
+
+# IDE
+.idea/
+
+# Outputs and artifacts
+outputs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments / conda
+.venv/
+venv/
+env/
+*.conda
+*.egg-link
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Model weights and large files
+*.bin
+*.pt
+*.pth
+*.safetensors
+*.onnx
+*.gguf
+
+# Data (add exceptions below if needed)
+# data/
+
+# Logs
+*.log
+logs/
+wandb/
+runs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / environment
+.env
+.env.*
+*.key
