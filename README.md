@@ -1,6 +1,10 @@
 # <img src="webpage/images/flownar_icon.png" height="30"> FlowNar: Scalable Streaming Narration for Long-Form Videos
 
-**ICML 2026** &nbsp;|&nbsp; [Paper](ARXIV_LINK) &nbsp;|&nbsp; [HuggingFace Models](https://huggingface.co/zeyun-zhong) &nbsp;|&nbsp; [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+<a href="https://icml.cc/Conferences/2026"><img src="https://img.shields.io/badge/ICML-2026-7B2D8B?style=flat-square" alt="ICML 2026"></a>
+<a href="ARXIV_LINK"><img src="https://img.shields.io/badge/Paper-arXiv-b31b1b?style=flat-square&logo=arxiv&logoColor=white" alt="Paper"></a>
+<a href="https://zeyun-zhong.github.io/FlowNar/"><img src="https://img.shields.io/badge/Project-Page-4285F4?style=flat-square&logo=googlechrome&logoColor=white" alt="Project Page"></a>
+<a href="https://huggingface.co/datasets/zeyun-zhong/FlowNar-Data/tree/main"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Data-FFD21E?style=flat-square" alt="HuggingFace Data"></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License: MIT"></a>
 
 [Zeyun Zhong](mailto:zeyun.zhong@kit.edu)\*, [Manuel Martin](), [Chengzhi Wu](), [David Schneider](), [Frederik Diederichs](), [Juergen Gall](), [Juergen Beyerer]()
 
