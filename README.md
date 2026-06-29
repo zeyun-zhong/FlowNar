@@ -12,7 +12,7 @@
 
 ---
 
-## Demo
+## 🎬 Demo
 
 [![Click to Play](webpage/images/demo_video.png)](https://drive.google.com/file/d/1aT5tbPAp4gqZyxFVCH-6T4PUi1lWX0PW/view?usp=drive_link)
 
@@ -20,7 +20,7 @@
 
 ---
 
-## Introduction
+## ✨ Introduction
 
 Our paper presents a scalable approach for streaming video narration, introducing several interesting features:
 - **Dynamic Context Management (DCM).** Prunes the visual KV cache after each narration segment, preventing unbounded context growth and reducing error propagation from potentially misaligned history. 
@@ -30,7 +30,7 @@ It then uses a streaming memory (CLAM) to iteratively compress visual informatio
 
 ---
 
-## Repository Structure
+## 📂 Repository Structure
 
 ```
 FlowNar/
@@ -55,7 +55,7 @@ FlowNar/
 
 ---
 
-## Installation
+## ⚙️ Installation
 
 **Requirements:** Python 3.10, CUDA 12.1
 
@@ -70,7 +70,7 @@ Key dependencies: PyTorch 2.3.1 · Transformers 4.43.2 · DeepSpeed 0.15.4 · fl
 
 ---
 
-## Data Preparation
+## 📦 Data Preparation
 
 Download all dataset features and annotations from HuggingFace:
 
@@ -105,7 +105,7 @@ FlowNar-Data/
 
 ---
 
-## Pretrained Models
+## 🤖 Pretrained Models
 
 | Model | Pretrained on   | HuggingFace                                                                               |
 |-------|-----------------|-------------------------------------------------------------------------------------------|
@@ -117,7 +117,7 @@ These checkpoints are used directly with `--resume_from_checkpoint` in the comma
 
 ---
 
-## Training and Evaluation
+## 🚀 Training and Evaluation
 
 ### Hardware
 
@@ -201,13 +201,13 @@ For other datasets, use the scripts in `scripts/ego4d/stream_generate/` and `scr
 
 ---
 
-## Acknowledgement
+## 🙏 Acknowledgement
 
 This work builds upon [VideoLLM-Online](https://github.com/showlab/videollm-online). We thank the authors for their excellent open-source implementation.
 
 ---
 
-## Citation
+## 📑 Citation
 
 If you find this work useful, please consider citing:
 
@@ -225,6 +225,6 @@ If you find this work useful, please consider citing:
 
 ---
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
